@@ -1,4 +1,4 @@
-# 4x4 Euler Square - Python 窮舉解程式
+# 4x4 Euler Squares Python CPSolver  窮舉程式
 
 - cmd 執行指令:
 

@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{CJKutf8}
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+\usepackage{color}
+\usepackage{verbatim}
+\begin{document}
+\begin{CJK}{UTF8}{bsmi}
+
+
+\title{$n^2$ Euler-Squares 邏輯限制式數學模型}
+\date{2020.5}
+\author{加減 Plus \& Minus}
+
+
+\maketitle
+\section{情境描述}
+有一個 $n \times n$ 方格，列行座標為 $ S := \bigg\{(0,0),(0,1),....(n-1,n-1)\bigg\}$ , 行集合  $ J := \bigg\{0,1,2,...n-1 \bigg\}$,  列集合 $ I := \bigg\{0,1,2,...n-1 \bigg\}$ ，有 $n^2$ 個相異物件，每個物件$(a_1,a_2)$ 可用兩種屬性集 $A_1 , A_2$表示，數學式大概可寫成 $$\left|\bigg\{ (a_1,a_2) \in A_1 \times A_2 : |A_1| = |A_2| =n  \bigg\}\right| = n^2 $$ ，今要尋找{\color{red}所有放法}(把這 $n^2$ 個物件放到方格上，並滿足以下條件)
+\begin{itemize}
+\item 每一列物件恰有 所有屬性 $A_1$ , $A_2$ ，且屬性不會重覆
+\item 每一行物件恰有 所有屬性 $A_1$ , $A_2$ ，且屬性不會重覆
+\item 兩條主對角線恰有所有屬性 $A_1$ , $A_2$ ，且屬性不會重覆，其中對角線座標集可既做
+\begin{itemize}
+\item $S^{\text{左上右下}}:= \bigg\{(i,j) \in S : i=j \bigg \}$
+\item $S^{\text{左下右上}} :=\bigg\{(i,j) \in S : i+j = (n-1) \bigg \} $
+
+\end{itemize}
+\end{itemize}
+\newpage
+\section{邏輯數學建模}
+\begin{itemize}
+\item 定義 $n^4$ 大小，四維布林陣列 $ X \in \bigg\{0,1\bigg\}^{I\times J \times A_1 \times A_2}$  \\  {\color{blue}$X(i,j,a_1,a_2) = 1  \iff  $ 把物件$(a_1,a_2)$ 放到方格 $(i,j)$ 位置上} \\ 
+並把以下限制式放入 CP(Constraint Programming) Solver ，即可有效率窮舉求解 !!
+
+\item (1) 每一個方格恰好放一個物件
+		$$  \bigwedge_{i \in I}\bigwedge_{j \in J}  \bigg[\sum_{a_1 \in A_1}\sum_{a_2 \in A_2}X(i,j,a_1,a_2) =1  \bigg]$$
+
+\item (2) 每一個物件在所有方格上是存在且唯一
+	$$  \bigwedge_{a_1 \in A_1}\bigwedge_{a_2 \in A_2}  \bigg[\sum_{i\in I}\sum_{j \in J}X(i,j,a_1,a_2) =1  \bigg]$$
+	
+\item (3-1) 每一列物件都含有所有屬性$A_1$且都唯一
+	$$  \bigwedge_{i\in I}\bigwedge_{a_1 \in A_1}  \bigg[\sum_{a_2 \in A_2}\sum_{j \in J}X(i,j,a_1,a_2) =1  \bigg]$$
+\item (3-2) 每一列物件都含有所有屬性$A_2$且都唯一
+	$$  \bigwedge_{i\in I}\bigwedge_{a_2 \in A_2}  \bigg[\sum_{a_1 \in A_1}\sum_{j \in J}X(i,j,a_1,a_2) =1  \bigg]$$
+
+
+\item (4-1) 每一行物件都含有所有屬性$A_1$且都唯一
+	$$  \bigwedge_{j\in J}\bigwedge_{a_1 \in A_1}  \bigg[\sum_{a_2 \in A_2}\sum_{i \in I}X(i,j,a_1,a_2) =1  \bigg]$$
+	
+\item (4-2) 每一行物件都含有所有屬性$A_2$且都唯一
+$$  \bigwedge_{j\in J}\bigwedge_{a_2 \in A_2}  \bigg[\sum_{a_1 \in A_1}\sum_{i \in I}X(i,j,a_1,a_2) =1  \bigg]$$
+	
+\item (5-1) 主對角線(左上右下)物件都含有所有屬性$A_1$且都唯一
+	$$  \bigwedge_{a_1 \in A_1}  \bigg[\sum_{(i,j)\in S^{\text{左上右下}}}\sum_{a_2 \in A_2}X(i,j,a_1,a_2) =1  \bigg]$$
+\item (5-2) 主對角線(左上右下)物件都含有所有屬性$A_2$且都唯一
+	$$  \bigwedge_{a_2 \in A_2} \bigg[\sum_{(i,j)\in S^{\text{左上右下}}}\sum_{a_1 \in A_1}X(i,j,a_1,a_2) =1  \bigg]$$
+\item (6-1) 主對角線(左下右上)物件都含有所有屬性$A_1$且都唯一
+	$$  \bigwedge_{a_1 \in A_1}  \bigg[\sum_{(i,j)\in S^{\text{左下右上}}}\sum_{a_2 \in A_2}X(i,j,a_1,a_2) =1  \bigg]$$
+\item (6-2) 主對角線(左下右上)物件都含有所有屬性$A_2$且都唯一
+	$$  \bigwedge_{a_2 \in A_2} \bigg[\sum_{(i,j)\in S^{\text{左下右上}}}\sum_{a_1 \in A_1}X(i,j,a_1,a_2) =1  \bigg]$$
+
+\end{itemize}
+
+\section{小記}
+\begin{itemize}
+\item  符號備註 : $$ \bigwedge \text{符號代表大 "and"  , 代表這些限制式要同時滿足，或可想成 for each ... such that   }$$
+\item 廣義抽象形式：
+		$$ \bigg(  \forall a \in A ,  \exists! b \in B \bigg)  \iff  \bigwedge_{a\in A} \sum_{b \in B} X(a,b) = 1 $$
+
+
+\end{itemize}
+
+
+\end{CJK}
+\end{document}
+
